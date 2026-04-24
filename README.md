@@ -17,6 +17,7 @@ This API provides a robust, scalable interface for campus facilities managers an
 | Component          | Technology                       |
 |--------------------|----------------------------------|
 | Language           | Java 11                          |
+| IDE                | Apache NetBeans                  |
 | JAX-RS Framework   | Jersey 2.40 (Reference Impl.)    |
 | Servlet Container  | Embedded Apache Tomcat 9.0.76    |
 | JSON Serialization | Jackson (via Jersey Media)       |
