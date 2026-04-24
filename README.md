@@ -153,9 +153,9 @@ curl -X GET http://localhost:8080/api/v1/sensors/TEMP-001/readings
 
 ---
 
-### Part 1 — Service Architecture & Setup
+### Part 1: Service Architecture & Setup
 
-**1.1 — JAX-RS Resource Lifecycle and In-Memory Data Management**
+**1.1:  JAX-RS Resource Lifecycle and In-Memory Data Management**
 
 By default, JAX-RS creates a completely new instance of a resource class every single time a request hits the server. So if ten users call `/api/v1/rooms` at the same time, the runtime spins up ten separate `RoomResource` objects, handles each request, and then discards them. This is called per-request scoping, and it is the default behaviour defined in the JAX-RS specification.
 
@@ -167,7 +167,7 @@ But there is a second issue. When multiple requests arrive at the same milliseco
 
 ---
 
-**1.2 — Why HATEOAS Is a Hallmark of Advanced REST Design**
+**1.2:  Why HATEOAS Is a Hallmark of Advanced REST Design**
 
 HATEOAS stands for Hypermedia as the Engine of Application State. The idea is simple: instead of the client needing to already know every URL in your API, the server embeds navigational links directly inside its responses. The client just starts at a known root endpoint and follows the links from there.
 
@@ -179,9 +179,9 @@ In my discovery endpoint, I embedded a `links` object in the response containing
 
 ---
 
-### Part 2 — Room Management
+### Part 2:  Room Management
 
-**2.1 — Returning Only IDs vs Full Room Objects**
+**2.1:  Returning Only IDs vs Full Room Objects**
 
 When designing a list endpoint like `GET /api/v1/rooms`, you have a choice: return just the IDs, or return the full objects. Both approaches have trade-offs worth thinking through carefully.
 
@@ -193,7 +193,7 @@ In my implementation, I return full room objects in the list response. For a cam
 
 ---
 
-**2.2 — Is DELETE Idempotent in This Implementation?**
+**2.2:  Is DELETE Idempotent in This Implementation?**
 
 Yes, the DELETE operation is idempotent in my implementation, though it is worth being precise about what idempotent actually means here, because there is a common misconception.
 
@@ -207,9 +207,9 @@ There is also the safety constraint to consider. If the room has sensors, my imp
 
 ---
 
-### Part 3 — Sensor Operations & Linking
+### Part 3 : Sensor Operations & Linking
 
-**3.1 — Technical Consequences of Sending the Wrong Content-Type**
+**3.1: Technical Consequences of Sending the Wrong Content-Type**
 
 The `@Consumes(MediaType.APPLICATION_JSON)` annotation on a POST method tells the JAX-RS runtime to only match that method when the incoming request carries a `Content-Type: application/json` header. It is a declarative contract between the API and its clients.
 
@@ -219,7 +219,7 @@ This matters for a few reasons. It prevents invalid data from leaking into busin
 
 ---
 
-**3.2 — @QueryParam vs Path-Based Type Filtering**
+**3.2:  @QueryParam vs Path-Based Type Filtering**
 
 Using `@QueryParam` for filtering — as in `GET /api/v1/sensors?type=CO2` — is generally the better design compared to embedding the filter in the path like `/api/v1/sensors/type/CO2`, and the reasons come down to semantics and flexibility.
 
@@ -231,9 +231,9 @@ There is also a practical advantage. Query parameters compose naturally. A futur
 
 ---
 
-### Part 4 — Deep Nesting with Sub-Resources
+### Part 4: Deep Nesting with Sub-Resources
 
-**4.1 — Architectural Benefits of the Sub-Resource Locator Pattern**
+**4.1: Architectural Benefits of the Sub-Resource Locator Pattern**
 
 The Sub-Resource Locator pattern is a JAX-RS feature where a resource method returns an instance of another class rather than a response directly. JAX-RS then continues dispatching the request to that returned object. In my implementation, `SensorResource` has a method annotated with `@Path("/{sensorId}/readings")` that returns a `SensorReadingResource` instance, passing the sensor context along through the constructor.
 
@@ -247,9 +247,9 @@ In large APIs with dozens of nested resource hierarchies, this pattern is essent
 
 ---
 
-### Part 5 — Error Handling, Exception Mapping & Logging
+### Part 5:  Error Handling, Exception Mapping & Logging
 
-**5.2 — Why HTTP 422 Is More Semantically Accurate Than 404**
+**5.2:  Why HTTP 422 Is More Semantically Accurate Than 404**
 
 This distinction is subtle but important. HTTP `404 Not Found` means the URL the client requested does not exist on the server. It signals a routing problem — the client asked for something the server has no knowledge of at that address.
 
@@ -259,7 +259,7 @@ Returning `404` in this situation would be actively misleading. The client would
 
 ---
 
-**5.4 — Security Risks of Exposing Java Stack Traces**
+**5.4: Security Risks of Exposing Java Stack Traces**
 
 Exposing raw Java stack traces to external API consumers is a significant security vulnerability, specifically classified as Information Disclosure.
 
@@ -269,7 +269,7 @@ The principle here is minimal information disclosure — external clients should
 
 ---
 
-**5.5 — Why JAX-RS Filters Are Better Than Manual Logging**
+**5.5:  Why JAX-RS Filters Are Better Than Manual Logging**
 
 Placing `Logger.info()` calls inside every resource method is a valid approach, but it has a number of practical problems that filters solve completely.
 
